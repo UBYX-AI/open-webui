@@ -252,8 +252,10 @@ async def get_chat_by_id(id: str, user=Depends(get_verified_user)):
     chat = Chats.get_chat_by_id_and_user_id(id, user.id)
 
     if chat:
+        log.info(f"Chat found: {chat}")
         return ChatResponse(**{**chat.model_dump(), "chat": json.loads(chat.chat)})
     else:
+        log.warning(f"Chat not found for ID: {id} by user: {user.id}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail=ERROR_MESSAGES.NOT_FOUND
         )
