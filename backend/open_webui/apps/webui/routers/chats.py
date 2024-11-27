@@ -248,6 +248,7 @@ async def get_all_tags(user=Depends(get_verified_user)):
 
 @router.get("/{id}", response_model=Optional[ChatResponse])
 async def get_chat_by_id(id: str, user=Depends(get_verified_user)):
+    log.info(f"Received GET request for chat ID: {id} by user: {user.id}")
     chat = Chats.get_chat_by_id_and_user_id(id, user.id)
 
     if chat:

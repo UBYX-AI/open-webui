@@ -1,11 +1,15 @@
 import json
 import time
 import uuid
+import logging
 from typing import Optional
 
 from open_webui.apps.webui.internal.db import Base, get_db
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy import BigInteger, Boolean, Column, String, Text
+
+log = logging.getLogger(__name__)
+log.setLevel(SRC_LOG_LEVELS["MODELS"])
 
 ####################
 # Chat DB Schema
@@ -306,8 +310,10 @@ class ChatTable:
         try:
             with get_db() as db:
                 chat = db.query(Chat).filter_by(id=id, user_id=user_id).first()
+                log.debug(f"Fetching chat by ID {id} for user {user_id}. Result: {chat}")
                 return ChatModel.model_validate(chat)
         except Exception:
+            log.error(f"Error fetching chat by ID {id} for user {user_id}: {e}")
             return None
 
     def get_chats(self, skip: int = 0, limit: int = 50) -> list[ChatModel]:
